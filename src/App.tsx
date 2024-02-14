@@ -15,6 +15,8 @@ import { testHighlights as _testHighlights } from "./test-highlights";
 import { Spinner } from "./Spinner";
 // import { Sidebar } from "./Sidebar";
 
+import { ChatBox } from "./components/chatBox";
+
 import "./style/App.css";
 
 const testHighlights: Record<string, Array<IHighlight>> = _testHighlights;
@@ -23,6 +25,7 @@ interface State {
   url: string;
   highlights: Array<IHighlight>;
   isPopupOpen: boolean;
+  chatBoxes: Array<ChatBox>;
 }
 
 const getNextId = () => String(Math.random()).slice(2);
@@ -59,6 +62,7 @@ class App extends Component<{}, State> {
     highlights: testHighlights[initialUrl]
       ? [...testHighlights[initialUrl]]
       : [],
+    chatBoxes: [],
   };
   
   onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -102,6 +106,8 @@ class App extends Component<{}, State> {
   };
 
   componentDidMount() {
+    // When I don't want to use the test highlights
+    this.resetHighlights();
     window.addEventListener(
       "hashchange",
       this.scrollToHighlightFromHash,
@@ -181,8 +187,9 @@ class App extends Component<{}, State> {
     const { url, highlights } = this.state;
 
     return (
-      <div className="App" style={{ display: "flex", height: "100vh" }}>
-        <input type="file" onChange={this.onFileChange} accept="application/pdf" />
+      <>
+      <input type="file" onChange={this.onFileChange} accept="application/pdf" />
+      <div className="App" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         {/* <Sidebar
           highlights={highlights}
           resetHighlights={this.resetHighlights}
@@ -191,7 +198,7 @@ class App extends Component<{}, State> {
         <div
           style={{
             height: "100vh",
-            width: "75vw",
+            width: "100vw",
             position: "relative",
           }}
         >
@@ -273,6 +280,7 @@ class App extends Component<{}, State> {
           </PdfLoader>
         </div>
       </div>
+      </>
     );
   }
 }
