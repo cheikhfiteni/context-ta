@@ -1,4 +1,4 @@
-import React, { Component, ChangeEvent } from "react";
+import { Component, ChangeEvent } from "react";
 
 import {
   PdfLoader,
@@ -13,7 +13,7 @@ import type { IHighlight, NewHighlight } from "./react-pdf-highlighter";
 
 import { testHighlights as _testHighlights } from "./test-highlights";
 import { Spinner } from "./Spinner";
-import { Sidebar } from "./Sidebar";
+// import { Sidebar } from "./Sidebar";
 
 import "./style/App.css";
 

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 
 import { asElement, isHTMLElement } from "../lib/pdfjs-dom.js";
 import "../style/MouseSelection.css";
