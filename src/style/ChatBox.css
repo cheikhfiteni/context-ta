@@ -8,12 +8,22 @@
   }
   
   .ChatBox__card {
+    /* Add this so internal flexing flexes the parent */
+    display: flex;
+    flex-direction: column;
+
     padding: 10px;
     background: #fff;
     background-clip: padding-box;
     border: 1px solid #e8e8e8;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(37, 40, 43, 0.2);
+  }
+
+  .ChatBox__card__inputalignment {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   
   .ChatBox__card textarea {

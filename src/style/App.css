@@ -4,7 +4,9 @@ body {
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   /* Make lighter */
-  background-color: #525659;
+  background-color: #d8e2ed;
+  /* Dark mode saving
+  background-color: #525659; */
   color: #fff;
 }
 

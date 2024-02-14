@@ -201,10 +201,9 @@ class App extends Component<{}, State> {
     });
   }
 
-  // RENAME AND REFACTOR MY CODE MORE. RENAME TO HANDLE TOOLTIP CLICK
   handleToolTipClick = (selection: string, position: Position) => {
     this.setState((prevState) => ({
-      chatBoxes: [...prevState.chatBoxes, { position, size: { width: 200, height: 200 }, selection }],
+      chatBoxes: [...prevState.chatBoxes, { position, size: { width: 320, height: 200 }, selection }],
     }));
   };
 
@@ -222,7 +221,7 @@ class App extends Component<{}, State> {
         /> */}
         <ChatBox
           position={{ x: 0, y: 0 }}
-          size={{ width: 200, height: 200 }}
+          size={{ width: 320, height: 200 }}
           onResizeStop={(size) => console.log('Size:', size)}
           onDragStop={(position) => console.log('Position:', position)}
           onSubmit={(message) => console.log('Message:', message)}

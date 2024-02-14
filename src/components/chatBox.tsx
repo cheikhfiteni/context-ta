@@ -15,7 +15,7 @@ interface Size {
 }
 
 interface State {
-    compact: boolean;
+    isTextAreaFocused: boolean;
     text: string;
     chatInput: string;
     conversation: string[];
@@ -34,12 +34,20 @@ export class ChatBox extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            compact: false,
+            isTextAreaFocused: false,
             text: '',
             chatInput: '',
             conversation: [],
         };
     }
+
+    handleFocus = () => {
+        this.setState({ isTextAreaFocused: true });
+      };
+      
+      handleBlur = () => {
+        this.setState({ isTextAreaFocused: false });
+      };
 
     handleChatInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({ chatInput: event.target.value });
@@ -71,6 +79,14 @@ export class ChatBox extends Component<Props, State> {
     render() {
         return (
             <Rnd
+                enableResizing={
+                    this.state.isTextAreaFocused 
+                    ? { top: false, bottom: false, left: false, right: false, topRight: false, topLeft: false, bottomRight: false, bottomLeft: false } 
+                    : { top: true, bottom: true, left: true, right: true, topRight: true, topLeft: true, bottomRight: true, bottomLeft: true }
+                }
+                disableDragging={this.state.isTextAreaFocused}
+                minWidth={320}
+                minHeight={200}
                 default={{
                     x: this.props.position.x,
                     y: this.props.position.y,
@@ -87,14 +103,17 @@ export class ChatBox extends Component<Props, State> {
                             <div key={index} style={{ color: 'black', backgroundColor: 'white' }}>{message}</div>
                         ))}
                     </div>
-                    <form onSubmit={this.handleChatSubmit}>
+                    <form className = "ChatBox__card__inputalignment" onSubmit={this.handleChatSubmit}>
                         <textarea
                         placeholder="Type your message and press Enter"
-                        autoFocus
+                        onFocus={this.handleFocus}
+                        onBlur={this.handleBlur}
+                        //autoFocus
                         value={this.state.chatInput}
                         onChange={this.handleChatInputChange}
+                        style={{width: "100%", height: "100px"}}
                         />
-                        <input type="submit" value="Send" />
+                        <input type="submit" value="Send" style={{width: "100px"}}/>
                     </form>
                 </div>
             </Rnd>
