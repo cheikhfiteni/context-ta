@@ -12,7 +12,12 @@
   },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "axios": "^1.6.7",
+    "lodash.debounce": "^4.0.8",
+    "openai": "^4.27.0",
+    "pdfjs-dist": "2.16.105",
+    "react-rnd": "^10.1.10"
   },
   "devDependencies": {
     "@types/react": "^18.2.55",
