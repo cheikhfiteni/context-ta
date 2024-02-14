@@ -21,11 +21,28 @@ import "./style/App.css";
 
 const testHighlights: Record<string, Array<IHighlight>> = _testHighlights;
 
+interface Position {
+  x: number;
+  y: number;
+}
+
+interface Size {
+  width: number;
+  height: number;
+}
+
+
+interface ChatBoxPositionalState {
+  selection?: string;
+  position: Position;
+  size: Size;
+}
+
 interface State {
   url: string;
   highlights: Array<IHighlight>;
   isPopupOpen: boolean;
-  chatBoxes: Array<ChatBox>;
+  chatBoxes: Array<ChatBoxPositionalState>;
 }
 
 const getNextId = () => String(Math.random()).slice(2);
@@ -72,6 +89,7 @@ class App extends Component<{}, State> {
       this.setState({
         url: fileURL,
         highlights: [],
+        chatBoxes: [],
         isPopupOpen: false,
       });
     }
@@ -183,6 +201,13 @@ class App extends Component<{}, State> {
     });
   }
 
+  // RENAME AND REFACTOR MY CODE MORE. RENAME TO HANDLE TOOLTIP CLICK
+  handleToolTipClick = (selection: string, position: Position) => {
+    this.setState((prevState) => ({
+      chatBoxes: [...prevState.chatBoxes, { position, size: { width: 200, height: 200 }, selection }],
+    }));
+  };
+
   render() {
     const { url, highlights } = this.state;
 
@@ -195,6 +220,13 @@ class App extends Component<{}, State> {
           resetHighlights={this.resetHighlights}
           toggleDocument={this.toggleDocument}
         /> */}
+        <ChatBox
+          position={{ x: 0, y: 0 }}
+          size={{ width: 200, height: 200 }}
+          onResizeStop={(size) => console.log('Size:', size)}
+          onDragStop={(position) => console.log('Position:', position)}
+          onSubmit={(message) => console.log('Message:', message)}
+        />
         <div
           style={{
             height: "100vh",
@@ -223,6 +255,8 @@ class App extends Component<{}, State> {
                   <Tip
                     selection={content.text}
                     onOpen={transformSelection}
+                    // Eventually need to convert scaledPosition to Position using a lib function
+                    onToolTipClick={() => this.handleToolTipClick(content.text || "no text selected", { x: position.boundingRect.x1, y: position.boundingRect.y1 })}
                     onConfirm={(comment) => {
                       this.addHighlight({ content, position, comment });
                       hideTipAndSelection();
