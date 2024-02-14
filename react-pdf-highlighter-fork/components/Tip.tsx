@@ -29,7 +29,7 @@ export class Tip extends Component<Props, State> {
   };
 
   // for TipContainer
-  componentDidUpdate(nextProps: Props, nextState: State) {
+  componentDidUpdate(_nextProps: Props, nextState: State) {
     const { onUpdate } = this.props;
 
     if (onUpdate && this.state.compact !== nextState.compact) {
@@ -75,8 +75,7 @@ export class Tip extends Component<Props, State> {
   };
 
   render() {
-    const { onConfirm, onOpen } = this.props;
-    const { compact, text, emoji, chatInput, conversation } = this.state;
+    const { compact, chatInput, conversation } = this.state;
 
     return (
       <div className="Tip">

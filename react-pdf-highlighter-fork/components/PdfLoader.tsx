@@ -50,7 +50,8 @@ export class PdfLoader extends Component<Props, State> {
     }
   }
 
-  componentDidCatch(error: Error, info?: any) {
+  // silence unused variable warning, but still catch the error
+  componentDidCatch(error: Error, _info?: any) {
     const { onError } = this.props;
 
     if (onError) {

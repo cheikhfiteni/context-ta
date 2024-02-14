@@ -89,7 +89,9 @@ class App extends Component<{}, State> {
     });
   };
 
-  scrollViewerTo = (highlight: any) => {};
+  // Not sure why this function is here. I think it is to do a scroll animation
+  // but putting the component id hash in the url already causes a jump. TODO: fix
+  scrollViewerTo = (_highlight: any) => {};
 
   scrollToHighlightFromHash = () => {
     const highlight = this.getHighlightById(parseIdFromHash());
@@ -120,17 +122,20 @@ class App extends Component<{}, State> {
     }
   };
 
+  // TODO: Finish these with cursor like dyanmic chat input
   openChatWithHighlightedText = () => {
     const selectedText = this.getSelectedText();
-    if (selectedText) {
-      // Open your chat textbox here and prepend the selectedText to the prompt
-      // You might need to set some state to render the textbox and pass the selectedText
-    }
+    console.log('Selected text:', selectedText);
+    // Open chat with selected text
   };
 
+
+  // The selected text thing actually happens in the Tip component.
+  // which is passed content.text as the selection. So...
+  // TODO: need to use statehook to store the selected text and then pass it to the chat
+  // on hotkey.
   getSelectedText = () => {
-    // Logic to get the selected text from the PDF viewer
-    // This will depend on how the PDF viewer provides access to the selected text
+    return "This is the selected text";
   };
 
   getHighlightById(id: string) {
@@ -254,7 +259,7 @@ class App extends Component<{}, State> {
                     <Popup
                       popupContent={<HighlightPopup {...highlight} />}
                       onMouseOver={(popupContent) =>
-                        setTip(highlight, (highlight) => popupContent)
+                        setTip(highlight, () => popupContent)
                       }
                       onMouseOut={hideTip}
                       key={index}
