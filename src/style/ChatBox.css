@@ -9,8 +9,9 @@
   
   .ChatBox__card {
     /* Add this so internal flexing flexes the parent */
-    display: flex;
-    flex-direction: column;
+    /* Didn't work */
+    /* display: flex;
+    flex-direction: column; */ 
 
     padding: 10px;
     background: #fff;

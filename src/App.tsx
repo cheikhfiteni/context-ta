@@ -233,6 +233,9 @@ class App extends Component<{}, State> {
         onRotate={() => console.log('Rotate clicked')}
         onPrint={() => console.log('Print clicked')}
         onMoreActions={() => console.log('More actions clicked')}
+        onDownload={() => console.log('Download clicked')}
+        handlePageChange={() => console.log('Page change clicked')}
+        pageNumber={1000}
       />
       <div className="App" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         {/* <Sidebar
