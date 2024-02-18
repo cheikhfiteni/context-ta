@@ -45,7 +45,7 @@ interface State {
   isPopupOpen: boolean;
   chatBoxes: Array<ChatBoxPositionalState>;
 }
-
+const DOCK_HIDE_DELAY = 4000; // 4 seconds
 const getNextId = () => String(Math.random()).slice(2);
 
 const parseIdFromHash = () =>
@@ -76,6 +76,9 @@ const initialUrl = searchParams.get("url") || PRIMARY_PDF_URL;
 let initialTitle = searchParams.get("title") || "Fast and Precise Type Checking for JavaScript";
 
 class App extends Component<{}, State> {
+  dockTimeout: NodeJS.Timeout | null = null;
+  dockRef = React.createRef<HTMLDivElement>();
+  oldScroll: number = 0;
   state = {
     url: initialUrl,
     isPopupOpen: false,
@@ -86,6 +89,41 @@ class App extends Component<{}, State> {
   };
 
   fileInputRef = React.createRef<HTMLInputElement>();
+
+  setupDockVisibility = () => {
+    this.dockTimeout = null;
+    this.oldScroll = window.scrollY;
+
+    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener('scroll', this.handleScroll);
+  }
+
+  handleMouseMove = (e: MouseEvent) => {
+    if (this.dockRef.current && (e.clientY > window.innerHeight - this.dockRef.current.offsetHeight || e.target === this.dockRef.current)) {
+      this.showDock();
+    }
+  }
+  handleScroll = () => {
+    if (this.oldScroll > window.scrollY) {
+      this.showDock();
+    }
+    this.oldScroll = window.scrollY;
+  }
+
+  showDock = () => {
+    if (this.dockRef.current) {
+      this.dockRef.current.style.display = 'block';
+      if (this.dockTimeout) {
+        clearTimeout(this.dockTimeout);
+      }
+      this.dockTimeout = setTimeout(() => {
+        if (this.dockRef.current) {
+          this.dockRef.current.style.display = 'none';
+        }
+      }, DOCK_HIDE_DELAY);
+    }
+  }
+
 
   onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -132,6 +170,7 @@ class App extends Component<{}, State> {
   componentDidMount() {
     // When I don't want to use the test highlights
     this.resetHighlights();
+    this.setupDockVisibility();
     window.addEventListener(
       "hashchange",
       this.scrollToHighlightFromHash,
@@ -226,6 +265,8 @@ class App extends Component<{}, State> {
         accept="application/pdf"
       />
       <Dock
+        // className="dock"
+        ref={this.dockRef}
         title={null|| initialTitle}
         onMenuClick={() => this.fileInputRef.current?.click()}
         onZoomIn={() => console.log('Zoom in clicked')}

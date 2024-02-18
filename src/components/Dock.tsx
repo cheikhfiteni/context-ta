@@ -2,6 +2,8 @@ import React from 'react';
 import "../style/Dock.css";
 
 interface DockProps {
+  // className?: string;
+  ref?: React.Ref<HTMLDivElement>;
   title: string;
   pageNumber: number;
   onMenuClick: () => void;
@@ -19,6 +21,7 @@ const SLICE_LENGTH = 53;
 
 const Dock: React.FC<DockProps> = ({
   title,
+  ref,
   onMenuClick,
   onZoomIn,
   onZoomOut,
@@ -30,7 +33,7 @@ const Dock: React.FC<DockProps> = ({
   handlePageChange,
   pageNumber
 }) => (
-  <div id="toolbar" style={{ display: 'flex', justifyContent: 'space-between' }}>
+  <div id="toolbar" ref={ref} style={{ display: 'flex', justifyContent: 'space-between' }}>
     <div id="start" style={{ paddingLeft: '2ch', display: 'flex', alignItems: 'center' }}>
       <button onClick={onMenuClick} title="Open menu">Menu</button>
       {/* Change the font, and title up padding */}
