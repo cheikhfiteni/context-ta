@@ -1,4 +1,4 @@
-import { Component, ChangeEvent } from "react";
+import React, { Component, ChangeEvent } from "react";
 
 import {
   PdfLoader,
@@ -16,6 +16,7 @@ import { Spinner } from "./Spinner";
 // import { Sidebar } from "./Sidebar";
 
 import { ChatBox } from "./components/chatBox";
+import Dock from "./components/Dock";
 
 import "./style/App.css";
 
@@ -71,6 +72,7 @@ const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
 const searchParams = new URLSearchParams(document.location.search);
 
 const initialUrl = searchParams.get("url") || PRIMARY_PDF_URL;
+let initialTitle = searchParams.get("title") || "Fast and Precise Type Checking for JavaScript";
 
 class App extends Component<{}, State> {
   state = {
@@ -81,11 +83,14 @@ class App extends Component<{}, State> {
       : [],
     chatBoxes: [],
   };
-  
+
+  fileInputRef = React.createRef<HTMLInputElement>();
+
   onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       const fileURL = URL.createObjectURL(file);
+      initialTitle = file.name;
       this.setState({
         url: fileURL,
         highlights: [],
@@ -212,20 +217,36 @@ class App extends Component<{}, State> {
 
     return (
       <>
-      <input type="file" onChange={this.onFileChange} accept="application/pdf" />
+      <input
+        type="file"
+        ref={this.fileInputRef}
+        style={{ display: 'none' }}
+        onChange={this.onFileChange}
+        accept="application/pdf"
+      />
+      <Dock
+        title={null|| initialTitle}
+        onMenuClick={() => this.fileInputRef.current?.click()}
+        onZoomIn={() => console.log('Zoom in clicked')}
+        onZoomOut={() => console.log('Zoom out clicked')}
+        onFitToPage={() => console.log('Fit to page clicked')}
+        onRotate={() => console.log('Rotate clicked')}
+        onPrint={() => console.log('Print clicked')}
+        onMoreActions={() => console.log('More actions clicked')}
+      />
       <div className="App" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         {/* <Sidebar
           highlights={highlights}
           resetHighlights={this.resetHighlights}
           toggleDocument={this.toggleDocument}
         /> */}
-        <ChatBox
-          position={{ x: 0, y: 0 }}
+        {/* <ChatBox
+          position={{ x: window.innerWidth - 350, y: 240 }}
           size={{ width: 320, height: 200 }}
           onResizeStop={(size) => console.log('Size:', size)}
           onDragStop={(position) => console.log('Position:', position)}
           onSubmit={(message) => console.log('Message:', message)}
-        />
+        /> */}
         <div
           style={{
             height: "100vh",
@@ -311,6 +332,13 @@ class App extends Component<{}, State> {
               />
             )}
           </PdfLoader>
+          <ChatBox
+            position={{ x: window.innerWidth - 350, y: 240 }}
+            size={{ width: 320, height: 200 }}
+            onResizeStop={(size) => console.log('Size:', size)}
+            onDragStop={(position) => console.log('Position:', position)}
+            onSubmit={(message) => console.log('Message:', message)}
+          />
         </div>
       </div>
       </>
