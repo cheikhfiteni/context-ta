@@ -230,8 +230,8 @@ class App extends Component<{}, State> {
         onMenuClick={() => this.fileInputRef.current?.click()}
         onZoomIn={() => console.log('Zoom in clicked')}
         onZoomOut={() => console.log('Zoom out clicked')}
-        onFitToPage={() => console.log('Fit to page clicked')}
-        onRotate={() => console.log('Rotate clicked')}
+        // onFitToPage={() => console.log('Fit to page clicked')}
+        // onRotate={() => console.log('Rotate clicked')}
         onPrint={() => console.log('Print clicked')}
         onMoreActions={() => console.log('More actions clicked')}
         onDownload={() => console.log('Download clicked')}

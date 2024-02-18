@@ -7,8 +7,8 @@ interface DockProps {
   onMenuClick: () => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
-  onFitToPage: () => void;
-  onRotate: () => void;
+  // onFitToPage: () => void;
+  // onRotate: () => void;
   onPrint: () => void;
   onMoreActions: () => void;
   onDownload: () => void;
@@ -22,8 +22,8 @@ const Dock: React.FC<DockProps> = ({
   onMenuClick,
   onZoomIn,
   onZoomOut,
-  onFitToPage,
-  onRotate,
+  // onFitToPage,
+  // onRotate,
   onPrint,
   onMoreActions,
   onDownload,
