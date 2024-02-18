@@ -8,6 +8,7 @@ body {
   /* Dark mode saving */
   /* background-color: #525659; */
   color: #fff;
+  overflow: hidden;
 }
 
 .sidebar {
