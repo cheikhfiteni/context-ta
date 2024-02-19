@@ -572,22 +572,22 @@ export class PdfHighlighter<T_HT extends IHighlight> extends PureComponent<
 
     return (
       <div onPointerDown={this.onMouseDown}>
-      {/* Just does the same as if in App.tsx. But works same which is based */}
-      {/* {this.props.chatBoxes.map((chatBox, index) => (
-        <ChatBox
-          key={index}
-          position={chatBox.position}
-          size={chatBox.size}
-          onResizeStop={(size) => console.log('Size:', size)}
-          onDragStop={(position) => console.log('Position:', position)}
-          onSubmit={(message) => console.log('Message:', message)}
-        />
-      ))} */}
         <div
           ref={this.containerNodeRef}
           className="PdfHighlighter"
           onContextMenu={(e) => e.preventDefault()}
         >
+          {/* FINALLY FINALLY FINALLY. Need to use this connective tissue and have it open in the right pace */}
+          {this.props.chatBoxes.map((chatBox, index) => (
+            <ChatBox
+              key={index}
+              position={chatBox.position}
+              size={chatBox.size}
+              onResizeStop={(size) => console.log('Size:', size)}
+              onDragStop={(position) => console.log('Position:', position)}
+              onSubmit={(message) => console.log('Message:', message)}
+            />
+          ))}
           <div className="pdfViewer" />
           {this.renderTip()}
           {typeof enableAreaSelection === "function" ? (
