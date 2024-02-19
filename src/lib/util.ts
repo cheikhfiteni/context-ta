@@ -7,11 +7,14 @@ interface CBPosition {
     y: number;
 }
 
-export function calculateChatBoxPosition(position: ScaledPosition, pageHeight: number): { x: number, y: number } {
-  const centerX = (position.boundingRect.x1 + position.boundingRect.x2) / 2;
-  const centerY = (position.boundingRect.y1 + position.boundingRect.y2) / 2;
-  const verticalOffset = (position.pageNumber - 1) * pageHeight;
-  console.log(`The pageNumber is: ${position.pageNumber}, The pageHeight is: ${pageHeight}, The verticalOffset is: ${verticalOffset}`);
+// So the resizing isn't working rn to update pageHeight, and boundingRectHeight already does the trick, but keeping
+// this general structure of pageHeight
+export function calculateChatBoxPosition(position: ScaledPosition, _pageHeight: number): { x: number, y: number } {
+  const boundingOffset = (position.pageNumber - 1) * position.boundingRect.height;
 
-  return { x: centerX, y: (centerY + verticalOffset) } as CBPosition;
+  const centerX = position.boundingRect.x1;
+  const centerY = position.boundingRect.y1 - 100;
+  console.log(`The pageNumber is: ${position.pageNumber}, The pageHeight inferred from boundingRectHeight is: ${position.boundingRect.height}, The boundingOffset is: ${boundingOffset}`);
+
+  return { x: centerX, y: (centerY + boundingOffset) } as CBPosition;
 }
