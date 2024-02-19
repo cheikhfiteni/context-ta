@@ -53,6 +53,8 @@ export class ChatBox extends Component<Props, State> {
         this.setState({ chatInput: event.target.value });
     }
 
+    // This is where relooping should be handled. Conditional on conversation length (to check if first prompt),
+    // then you loop through everything. Create a token  budget? See what API thinks
     handleChatSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const { chatInput, conversation } = this.state;

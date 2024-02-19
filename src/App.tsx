@@ -66,8 +66,8 @@ const HighlightPopup = ({
     </div>
   ) : null;
 
-// const PRIMARY_PDF_URL = "https://arxiv.org/pdf/1708.08021.pdf";
-const PRIMARY_PDF_URL = "https://cors-anywhere.herokuapp.com/https://www.cs.cmu.edu/~sandholm/Expressive%20commerce.aimag07.pdf";
+const PRIMARY_PDF_URL = "https://arxiv.org/pdf/1708.08021.pdf";
+// const PRIMARY_PDF_URL = "https://cors-anywhere.herokuapp.com/https://www.cs.cmu.edu/~sandholm/Expressive%20commerce.aimag07.pdf";
 const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
 
 const searchParams = new URLSearchParams(document.location.search);
@@ -82,7 +82,7 @@ class App extends Component<{}, State> {
     highlights: testHighlights[initialUrl]
       ? [...testHighlights[initialUrl]]
       : [],
-    chatBoxes: [],
+    chatBoxes: [] as Array<ChatBoxPositionalState>,
   };
 
   fileInputRef = React.createRef<HTMLInputElement>();
@@ -261,6 +261,7 @@ class App extends Component<{}, State> {
           <PdfLoader url={url} beforeLoad={<Spinner />}>
             {(pdfDocument) => (
               <PdfHighlighter
+                chatBoxes={this.state.chatBoxes}
                 pdfDocument={pdfDocument}
                 enableAreaSelection={(event) => event.altKey}
                 onScrollChange={resetHash}
@@ -336,13 +337,23 @@ class App extends Component<{}, State> {
               />
             )}
           </PdfLoader>
-          <ChatBox
+          {/* <ChatBox
             position={{ x: window.innerWidth - 350, y: 240 }}
             size={{ width: 320, height: 200 }}
             onResizeStop={(size) => console.log('Size:', size)}
             onDragStop={(position) => console.log('Position:', position)}
             onSubmit={(message) => console.log('Message:', message)}
-          />
+          /> */}
+          {/* {this.state.chatBoxes.map((chatBox, index) => (
+            <ChatBox
+              key={index}
+              position={chatBox.position}
+              size={chatBox.size}
+              onResizeStop={(size) => console.log('Size:', size)}
+              onDragStop={(position) => console.log('Position:', position)}
+              onSubmit={(message) => console.log('Message:', message)}
+            />
+          ))} */}
         </div>
       </div>
       </>

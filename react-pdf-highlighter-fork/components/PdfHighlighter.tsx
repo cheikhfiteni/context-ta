@@ -2,6 +2,8 @@ import "pdfjs-dist/web/pdf_viewer.css";
 import "../style/pdf_viewer.css";
 import "../style/PdfHighlighter.css";
 
+import { ChatBox } from "../../src/components/chatBox";
+
 import {
   EventBus,
   NullL10n,
@@ -55,7 +57,25 @@ interface State<T_HT> {
   scrolledToHighlightId: string;
 }
 
+interface CBPosition {
+  x: number;
+  y: number;
+}
+
+interface Size {
+  width: number;
+  height: number;
+}
+
+//NOTE THIS CHANGE. MAYBE FIX THE SCALING
+interface ChatBoxPositionalState {
+  selection?: string;
+  position: CBPosition;
+  size: Size;
+}
+
 interface Props<T_HT> {
+  chatBoxes: Array<ChatBoxPositionalState>;
   highlightTransform: (
     highlight: T_ViewportHighlight<T_HT>,
     index: number,
@@ -552,6 +572,17 @@ export class PdfHighlighter<T_HT extends IHighlight> extends PureComponent<
 
     return (
       <div onPointerDown={this.onMouseDown}>
+      {/* Just does the same as if in App.tsx. But works same which is based */}
+      {/* {this.props.chatBoxes.map((chatBox, index) => (
+        <ChatBox
+          key={index}
+          position={chatBox.position}
+          size={chatBox.size}
+          onResizeStop={(size) => console.log('Size:', size)}
+          onDragStop={(position) => console.log('Position:', position)}
+          onSubmit={(message) => console.log('Message:', message)}
+        />
+      ))} */}
         <div
           ref={this.containerNodeRef}
           className="PdfHighlighter"
@@ -656,6 +687,7 @@ export class PdfHighlighter<T_HT extends IHighlight> extends PureComponent<
     const { tip, scrolledToHighlightId } = this.state;
     root.render(
       <HighlightLayer
+        chatBoxes={this.props.chatBoxes}
         highlightsByPage={this.groupHighlightsByPage(highlights)}
         pageNumber={pageNumber.toString()}
         scrolledToHighlightId={scrolledToHighlightId}
