@@ -55,7 +55,7 @@ interface HighlightLayerProps<T_HT> {
 }
 
 export function HighlightLayer<T_HT extends IHighlight>({
-  chatBoxes,
+  // chatBoxes,
   highlightsByPage,
   scaledPositionToViewport,
   pageNumber,
@@ -108,7 +108,7 @@ export function HighlightLayer<T_HT extends IHighlight>({
         );
       })}
       {/* Note this is a functional component (finally ig lol) so destrcutured directly rather than with this */}
-      {chatBoxes.map((chatBox, index) => (
+      {/* {chatBoxes.map((chatBox, index) => (
         <ChatBox
           key={index}
           position={chatBox.position}
@@ -117,7 +117,7 @@ export function HighlightLayer<T_HT extends IHighlight>({
           onDragStop={(position) => console.log('Position:', position)}
           onSubmit={(message) => console.log('Message:', message)}
         />
-      ))}
+      ))} */}
     </div>
   );
 }
