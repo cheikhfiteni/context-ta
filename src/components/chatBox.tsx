@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import { Rnd } from 'react-rnd';;
 
-import { callOpenAI } from '../lib/openAI';
 import "../style/ChatBox.css";
+import { callOpenAIStream } from '../../react-pdf-highlighter-fork/openAI';
 
 interface Position {
     x: number;
@@ -16,7 +16,7 @@ interface Size {
 
 interface State {
     isTextAreaFocused: boolean;
-    text: string;
+    _text: string;
     chatInput: string;
     conversation: string[];
 }
@@ -35,7 +35,7 @@ export class ChatBox extends Component<Props, State> {
         super(props);
         this.state = {
             isTextAreaFocused: false,
-            text: '',
+            _text: '',
             chatInput: '',
             conversation: [],
         };
@@ -57,25 +57,31 @@ export class ChatBox extends Component<Props, State> {
     // then you loop through everything. Create a token  budget? See what API thinks
     handleChatSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const { chatInput, conversation } = this.state;
-        const prompt = "Make a reference to this specific highlighted text: " + this.state.text + "\n" + chatInput;
+        const { chatInput } = this.state;
+        const prompt = "Make a reference to this specific highlighted text: " + this.props.selection + "\n" + chatInput;
         console.log('Prompt:', prompt);
         console.log('Chat input:', chatInput);
-        console.log('Text:', this.state.text);
+        console.log('Text:', this.props.selection);
         this.setState(prevState => ({
-            conversation: [...prevState.conversation, this.state.chatInput],
+            conversation: [...prevState.conversation, `You: ${this.state.chatInput}`],
             chatInput: ''
-        }));
-    
-        try {
-          const response = await callOpenAI(prompt);
-          this.setState({
-            conversation: [...conversation, `You: ${chatInput}`, `AI: ${response}`],
+          }), async () => {
+            // This code will be executed after the state update is applied
+            const conversation = this.state.conversation;
+            const messages = conversation.map((message, index) => {
+              return { role: index % 2 === 0 ? "user" : "assistant", content: message };
+            });
+            try {
+              await callOpenAIStream(messages, (chunk) => {
+                this.setState(prevState => ({
+                  conversation: [...prevState.conversation, `AI: ${chunk}`],
+                }));
+              });
+            } catch (error) {
+              console.error('Error calling OpenAI:', error);
+              // Handle error appropriately
+            }
           });
-        } catch (error) {
-          console.error('Error calling OpenAI:', error);
-          // Handle error appropriately
-        }
       };
 
     render() {

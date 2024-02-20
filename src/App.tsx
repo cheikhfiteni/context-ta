@@ -13,9 +13,6 @@ import type { IHighlight, NewHighlight, ScaledPosition } from "./react-pdf-highl
 
 import { testHighlights as _testHighlights } from "./test-highlights";
 import { Spinner } from "./Spinner";
-// import { Sidebar } from "./Sidebar";
-
-import { ChatBox } from "./components/chatBox";
 import Dock from "./components/Dock";
 
 import "./style/App.css";

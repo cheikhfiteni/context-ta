@@ -583,6 +583,7 @@ export class PdfHighlighter<T_HT extends IHighlight> extends PureComponent<
               key={index}
               position={chatBox.position}
               size={chatBox.size}
+              selection={chatBox.selection}
               onResizeStop={(size) => console.log('Size:', size)}
               onDragStop={(position) => console.log('Position:', position)}
               onSubmit={(message) => console.log('Message:', message)}
