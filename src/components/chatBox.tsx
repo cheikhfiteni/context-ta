@@ -58,10 +58,8 @@ export class ChatBox extends Component<Props, State> {
     handleChatSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const { chatInput } = this.state;
-        const prompt = "Make a reference to this specific highlighted text: " + this.props.selection + "\n" + chatInput;
+        const prompt = this.state.conversation.length === 0 ? "Make a reference to this specific highlighted text: " + this.props.selection + "\n\n" + chatInput : chatInput;
         console.log('Prompt:', prompt);
-        console.log('Chat input:', chatInput);
-        console.log('Text:', this.props.selection);
         this.setState(prevState => ({
             conversation: [...prevState.conversation, `You: ${this.state.chatInput}`],
             chatInput: ''
@@ -69,13 +67,24 @@ export class ChatBox extends Component<Props, State> {
             // This code will be executed after the state update is applied
             const conversation = this.state.conversation;
             const messages = conversation.map((message, index) => {
+                message = message.startsWith('Y') ? message.replace(/^You: /, '') : message.replace(/^AI: /, '');
               return { role: index % 2 === 0 ? "user" : "assistant", content: message };
             });
+            console.log('Messages:', messages);
             try {
               await callOpenAIStream(messages, (chunk) => {
-                this.setState(prevState => ({
-                  conversation: [...prevState.conversation, `AI: ${chunk}`],
-                }));
+                this.setState(prevState => {
+                    let newConversation = [...prevState.conversation];
+                    if (newConversation.length === 0 || !newConversation[newConversation.length - 1].startsWith('AI:')) {
+                        // First response chunk creates new AI message
+                        newConversation.push(`AI: ${chunk}`);
+                      } else {
+                        // Otherwise, append the chunk to the last AI message
+                        newConversation[newConversation.length - 1] += chunk;
+                    }
+                  
+                    return { conversation: newConversation };
+                  });
               });
             } catch (error) {
               console.error('Error calling OpenAI:', error);
