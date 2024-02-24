@@ -53,6 +53,26 @@ export class ChatBox extends Component<Props, State> {
         this.setState({ chatInput: event.target.value });
     }
 
+    handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (event.key === 'Enter' && !event.metaKey && !event.ctrlKey && !event.shiftKey) {
+          event.preventDefault(); // Prevents the default action of Enter which is to insert a newline
+          if (this.state.isTextAreaFocused && this.state.chatInput.trim() !== '') {
+            this.handleChatSubmit(event as unknown as React.FormEvent<HTMLFormElement>);
+          }
+        } else if (event.key === 'Enter' && (event.shiftKey || event.metaKey)) {
+            event.preventDefault();
+            const { chatInput } = this.state;
+            const cursorPosition = event.currentTarget.selectionStart;
+            const newText = chatInput.slice(0, cursorPosition) + '\n' + chatInput.slice(cursorPosition);
+            this.setState({ chatInput: newText });
+            // Move the cursor to the next line after the inserted newline
+            setTimeout(() => {
+                event.currentTarget.selectionStart = cursorPosition + 1;
+                event.currentTarget.selectionEnd = cursorPosition + 1;
+            }, 0);
+        }
+      };
+
     // This is where relooping should be handled. Conditional on conversation length (to check if first prompt),
     // then you loop through everything. Create a token  budget? See what API thinks
     handleChatSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -128,6 +148,7 @@ export class ChatBox extends Component<Props, State> {
                         //autoFocus
                         value={this.state.chatInput}
                         onChange={this.handleChatInputChange}
+                        onKeyDown={this.handleKeyDown}
                         style={{width: "100%", height: "100px"}}
                         />
                         <input type="submit" value="Send" style={{width: "100px"}}/>
