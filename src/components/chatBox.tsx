@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Rnd } from 'react-rnd';;
 
 import "../style/ChatBox.css";
@@ -16,6 +16,8 @@ interface Size {
 
 interface State {
     isTextAreaFocused: boolean;
+    isChatBoxFocused: boolean;
+    chatBoxRef: React.RefObject<HTMLDivElement>;
     _text: string;
     chatInput: string;
     conversation: string[];
@@ -35,12 +37,38 @@ export class ChatBox extends Component<Props, State> {
         super(props);
         this.state = {
             isTextAreaFocused: false,
+            isChatBoxFocused: false,
+            chatBoxRef: React.createRef<HTMLDivElement>(),
             _text: '',
             chatInput: '',
             conversation: [],
         };
     }
 
+    componentDidMount() {
+        document.addEventListener('click', this.handleGlobalClick);
+    }
+    
+    componentWillUnmount() {
+        document.removeEventListener('click', this.handleGlobalClick);
+    }
+
+    handleChatBoxFocus = () => {
+        console.log('Chatbox focused');
+        this.setState({ isChatBoxFocused: true });
+    }
+
+    handleChatBoxBlur = () => {
+        console.log('Chatbox blurred');
+        this.setState({ isChatBoxFocused: false });
+    }
+
+    handleGlobalClick = (event: MouseEvent) => {
+        // Check if the click is outside the chatbox container
+        if (this.state.chatBoxRef.current && !this.state.chatBoxRef.current.contains(event.target as Node)) {
+            this.handleChatBoxBlur();
+        }
+    }
     handleFocus = () => {
         this.setState({ isTextAreaFocused: true });
       };
@@ -134,7 +162,7 @@ export class ChatBox extends Component<Props, State> {
                 onResizeStop={(_, __, ref) => this.props.onResizeStop({ width: ref.offsetWidth, height: ref.offsetHeight })}
                 style={{ zIndex: 1000 }}
             >
-                <div className="ChatBox__card">
+                <div ref={this.state.chatBoxRef} onClick={this.handleChatBoxFocus} className={`ChatBox__card ${this.state.isChatBoxFocused ? 'ChatBox__card--focused' : ''}`}>
                     <div>
                         {this.state.conversation.map((message, index) => (
                             <div key={index} style={{ color: 'black', backgroundColor: 'white' }}>{message}</div>

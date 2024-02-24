@@ -21,6 +21,10 @@
     box-shadow: 0 2px 4px rgba(37, 40, 43, 0.2);
   }
 
+  .ChatBox__card--focused {
+    outline: 2px solid blue;
+  }
+
   .ChatBox__card__inputalignment {
     display: flex;
     flex-direction: column;
