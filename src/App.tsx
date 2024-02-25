@@ -9,16 +9,14 @@ import {
   AreaHighlight,
 } from "./react-pdf-highlighter";
 
-import type { IHighlight, NewHighlight } from "./react-pdf-highlighter";
+import type { IHighlight, NewHighlight} from "./react-pdf-highlighter";
 
 import { testHighlights as _testHighlights } from "./test-highlights";
 import { Spinner } from "./Spinner";
-// import { Sidebar } from "./Sidebar";
-
-import { ChatBox } from "./components/chatBox";
 import Dock from "./components/Dock";
 
 import "./style/App.css";
+import { calculateChatBoxPosition } from "./lib/util";
 
 const testHighlights: Record<string, Array<IHighlight>> = _testHighlights;
 
@@ -66,8 +64,8 @@ const HighlightPopup = ({
     </div>
   ) : null;
 
-// const PRIMARY_PDF_URL = "https://arxiv.org/pdf/1708.08021.pdf";
-const PRIMARY_PDF_URL = "https://cors-anywhere.herokuapp.com/https://www.cs.cmu.edu/~sandholm/Expressive%20commerce.aimag07.pdf";
+const PRIMARY_PDF_URL = "https://arxiv.org/pdf/1708.08021.pdf";
+// const PRIMARY_PDF_URL = "https://cors-anywhere.herokuapp.com/https://www.cs.cmu.edu/~sandholm/Expressive%20commerce.aimag07.pdf";
 const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
 
 const searchParams = new URLSearchParams(document.location.search);
@@ -82,10 +80,12 @@ class App extends Component<{}, State> {
     highlights: testHighlights[initialUrl]
       ? [...testHighlights[initialUrl]]
       : [],
-    chatBoxes: [],
+    chatBoxes: [] as Array<ChatBoxPositionalState>,
   };
 
   fileInputRef = React.createRef<HTMLInputElement>();
+
+  pdfPageHeight = 0;
 
   onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -130,6 +130,7 @@ class App extends Component<{}, State> {
   };
 
   componentDidMount() {
+    this.updatePdfPageHeight();
     // When I don't want to use the test highlights
     this.resetHighlights();
     window.addEventListener(
@@ -138,11 +139,21 @@ class App extends Component<{}, State> {
       false
     );
     window.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener('resize', this.updatePdfPageHeight);
   }
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener('resize', this.updatePdfPageHeight);
   }
+
+  updatePdfPageHeight = () => {
+    const page = document.querySelector('.pdf-page') as HTMLElement;
+    if (page) {
+      this.pdfPageHeight = page.offsetHeight;
+    }
+  }
+
 
 
   handleKeyDown = (event: KeyboardEvent) => {
@@ -261,6 +272,7 @@ class App extends Component<{}, State> {
           <PdfLoader url={url} beforeLoad={<Spinner />}>
             {(pdfDocument) => (
               <PdfHighlighter
+                chatBoxes={this.state.chatBoxes}
                 pdfDocument={pdfDocument}
                 enableAreaSelection={(event) => event.altKey}
                 onScrollChange={resetHash}
@@ -280,7 +292,7 @@ class App extends Component<{}, State> {
                     selection={content.text}
                     onOpen={transformSelection}
                     // Eventually need to convert scaledPosition to Position using a lib function
-                    onToolTipClick={() => this.handleToolTipClick(content.text || "no text selected", { x: position.boundingRect.x1, y: position.boundingRect.y1 })}
+                    onToolTipClick={() => this.handleToolTipClick(content.text || "no text selected", calculateChatBoxPosition(position, this.pdfPageHeight) as Position)}
                     onConfirm={(comment) => {
                       this.addHighlight({ content, position, comment });
                       hideTipAndSelection();
@@ -336,13 +348,6 @@ class App extends Component<{}, State> {
               />
             )}
           </PdfLoader>
-          <ChatBox
-            position={{ x: window.innerWidth - 350, y: 240 }}
-            size={{ width: 320, height: 200 }}
-            onResizeStop={(size) => console.log('Size:', size)}
-            onDragStop={(position) => console.log('Position:', position)}
-            onSubmit={(message) => console.log('Message:', message)}
-          />
         </div>
       </div>
       </>

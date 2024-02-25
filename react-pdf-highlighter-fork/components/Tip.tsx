@@ -47,7 +47,8 @@ export class Tip extends Component<Props, State> {
   handleAddHighlightClick = () => {
     const selectedText = this.getSelectedText();
     console.log('Selected text:', selectedText);
-    this.setState({ text: selectedText, compact: false });
+    // DISABLING THE TOOL TIP EXPANSION, NOT NEEDED ANYMORE
+    this.setState({ text: selectedText, compact: true });
     this.props.onOpen();
 
     // Now if the ChatBox is handled elsewhere
