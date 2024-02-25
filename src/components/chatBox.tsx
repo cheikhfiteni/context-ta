@@ -174,6 +174,7 @@ export class ChatBox extends Component<Props, State> {
                     width: this.props.size.width,
                     height: this.props.size.height,
                 }}
+                onDrag={this.handleChatBoxBlur}
                 onDragStop={(_, data) => this.props.onDragStop({ x: data.x, y: data.y })}
                 onResizeStop={(_, __, ref) => this.props.onResizeStop({ width: ref.offsetWidth, height: ref.offsetHeight })}
                 style={{ zIndex: 1000 }}

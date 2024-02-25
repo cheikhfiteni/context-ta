@@ -22,7 +22,7 @@
   }
 
   .ChatBox__card--focused {
-    outline: 2px solid #015ecc;
+    outline: 1px groove #015ecc;
   }
 
   .ChatBox__card__inputalignment {
