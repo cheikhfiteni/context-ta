@@ -19,6 +19,8 @@
     border: 1px solid #e8e8e8;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(37, 40, 43, 0.2);
+    max-height: 400px;
+    overflow-y: auto;
   }
 
   .ChatBox__card--focused {

@@ -174,6 +174,8 @@ export class ChatBox extends Component<Props, State> {
                 disableDragging={this.state.isTextAreaFocused}
                 minWidth={320}
                 minHeight={200}
+                maxWidth={800}
+                maxHeight={600}
                 default={{
                     x: this.props.position.x,
                     y: this.props.position.y,
