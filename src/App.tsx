@@ -9,7 +9,7 @@ import {
   AreaHighlight,
 } from "./react-pdf-highlighter";
 
-import type { IHighlight, NewHighlight, ScaledPosition } from "./react-pdf-highlighter";
+import type { IHighlight, NewHighlight} from "./react-pdf-highlighter";
 
 import { testHighlights as _testHighlights } from "./test-highlights";
 import { Spinner } from "./Spinner";
