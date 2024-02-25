@@ -4,7 +4,7 @@ import { Rnd } from 'react-rnd';;
 import "../style/ChatBox.css";
 
 import Message from './Message';
-import { callOpenAIStream } from '../../react-pdf-highlighter-fork/openAI';
+import WebSocketService from '../lib/websocketService';
 
 interface Position {
     x: number;
@@ -46,9 +46,11 @@ interface Props {
 
 export class ChatBox extends Component<Props, State> {
     ws: WebSocket | null;
+    webSocketService: WebSocketService;
     constructor(props: Props) {
         super(props);
         this.ws = null;
+        this.webSocketService = new WebSocketService();
         this.state = {
             isTextAreaFocused: false,
             isChatBoxFocused: false,
@@ -60,49 +62,40 @@ export class ChatBox extends Component<Props, State> {
 
     componentDidMount() {
         document.addEventListener('click', this.handleGlobalClick);
-        // Connect to the WebSocket server. Eventually use 
-        this.ws = new WebSocket('ws://localhost:3000');
-        
-        // IF WE SEPERATE CONCERNS TO A DIFFERENT FILE THIS STILL STAYS IN THE COMPONENT AS
-        // HANDLEWEBSOCKETMESSAGE. EVENTUALLY USE A MESSAGE BROKER AS WELL
-        this.ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-    
-            if (message.content) {
-                try {
-                    const chunk = message.content;
-                    this.setState(prevState => {
-                        let newConversation = [...prevState.conversation];
-                        if (newConversation.length === 0 || !newConversation[newConversation.length - 1].startsWith('AI:')) {
-                            // First response chunk creates new AI message
-                            newConversation.push(`AI: ${chunk}`);
-                        } else {
-                            // Otherwise, append the chunk to the last AI message
-                            newConversation[newConversation.length - 1] += chunk;
-                        }
-                    
-                        return { conversation: newConversation };
-                    });
-                  } catch (error) {
-                    console.error('Error calling OpenAI:', error);
-                    // Handle error appropriately
-                  }
-            }
-        };
+        // Switch to correct URL later. Have testing and prod envs when doing CI/CD
+        this.webSocketService.initialize('ws://localhost:3000');
+        // Where the magic happens. Eventually use a message broker
+        this.webSocketService.onMessage((message) => {this.handleWebSocketMessage(message)});
     }
     
     componentWillUnmount() {
         document.removeEventListener('click', this.handleGlobalClick);
-        if (this.ws) {
-            this.ws.close();
-        }
+        this.webSocketService.close();
     }
 
     sendMessageToAPI(messages: { role: string; content: string; }[]) {
-        if (!this.ws) {
-            return;
+        this.webSocketService.sendMessage(messages);
+    }
+
+    handleWebSocketMessage = (message: any) => {
+        try {
+            const chunk = message.content;
+            this.setState(prevState => {
+                let newConversation = [...prevState.conversation];
+                if (newConversation.length === 0 || !newConversation[newConversation.length - 1].startsWith('AI:')) {
+                    // First response chunk creates new AI message
+                    newConversation.push(`AI: ${chunk}`);
+                } else {
+                    // Otherwise, append the chunk to the last AI message
+                    newConversation[newConversation.length - 1] += chunk;
+                }
+            
+                return { conversation: newConversation };
+            });
+        } catch (error) {
+        console.error('Error recieving data on calling OpenAI:', error);
+        // Handle error appropriately
         }
-        this.ws.send(JSON.stringify({ messages }));
     }
 
     handleChatBoxFocus = () => {
@@ -218,10 +211,10 @@ export class ChatBox extends Component<Props, State> {
                 <div ref={this.state.chatBoxRef} onClick={this.handleChatBoxFocus} className={`ChatBox__card ${this.state.isChatBoxFocused ? 'ChatBox__card--focused' : ''}`}>
                     <div>
                         {this.state.conversation.map((message, index) => (
-                            <>
-                            <Message key={index} message={message} />
-                            <br />
-                            </>
+                            <React.Fragment key={index}>
+                                <Message message={message} />
+                                <br />
+                            </React.Fragment>
                         ))}
                     </div>
                     <form className = "ChatBox__card__inputalignment" onSubmit={this.handleChatSubmit}>
