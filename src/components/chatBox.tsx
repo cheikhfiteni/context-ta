@@ -45,8 +45,10 @@ interface Props {
 }
 
 export class ChatBox extends Component<Props, State> {
+    ws: WebSocket | null;
     constructor(props: Props) {
         super(props);
+        this.ws = null;
         this.state = {
             isTextAreaFocused: false,
             isChatBoxFocused: false,
@@ -58,10 +60,49 @@ export class ChatBox extends Component<Props, State> {
 
     componentDidMount() {
         document.addEventListener('click', this.handleGlobalClick);
+        // Connect to the WebSocket server. Eventually use 
+        this.ws = new WebSocket('ws://localhost:3000');
+        
+        // IF WE SEPERATE CONCERNS TO A DIFFERENT FILE THIS STILL STAYS IN THE COMPONENT AS
+        // HANDLEWEBSOCKETMESSAGE. EVENTUALLY USE A MESSAGE BROKER AS WELL
+        this.ws.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+    
+            if (message.content) {
+                try {
+                    const chunk = message.content;
+                    this.setState(prevState => {
+                        let newConversation = [...prevState.conversation];
+                        if (newConversation.length === 0 || !newConversation[newConversation.length - 1].startsWith('AI:')) {
+                            // First response chunk creates new AI message
+                            newConversation.push(`AI: ${chunk}`);
+                        } else {
+                            // Otherwise, append the chunk to the last AI message
+                            newConversation[newConversation.length - 1] += chunk;
+                        }
+                    
+                        return { conversation: newConversation };
+                    });
+                  } catch (error) {
+                    console.error('Error calling OpenAI:', error);
+                    // Handle error appropriately
+                  }
+            }
+        };
     }
     
     componentWillUnmount() {
         document.removeEventListener('click', this.handleGlobalClick);
+        if (this.ws) {
+            this.ws.close();
+        }
+    }
+
+    sendMessageToAPI(messages: { role: string; content: string; }[]) {
+        if (!this.ws) {
+            return;
+        }
+        this.ws.send(JSON.stringify({ messages }));
     }
 
     handleChatBoxFocus = () => {
@@ -142,22 +183,9 @@ export class ChatBox extends Component<Props, State> {
             });
             console.log('Messages:', messages);
             try {
-              await callOpenAIStream(messages, (chunk) => {
-                this.setState(prevState => {
-                    let newConversation = [...prevState.conversation];
-                    if (newConversation.length === 0 || !newConversation[newConversation.length - 1].startsWith('AI:')) {
-                        // First response chunk creates new AI message
-                        newConversation.push(`AI: ${chunk}`);
-                      } else {
-                        // Otherwise, append the chunk to the last AI message
-                        newConversation[newConversation.length - 1] += chunk;
-                    }
-                  
-                    return { conversation: newConversation };
-                  });
-              });
+                this.sendMessageToAPI(messages);
             } catch (error) {
-              console.error('Error calling OpenAI:', error);
+              console.error('Error sending messages to Express backend:', error);
               // Handle error appropriately
             }
           });
