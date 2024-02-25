@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Rnd } from 'react-rnd';;
 
 import "../style/ChatBox.css";
+
+import Message from './Message';
 import { callOpenAIStream } from '../../react-pdf-highlighter-fork/openAI';
 
 interface Position {
@@ -18,7 +20,6 @@ interface State {
     isTextAreaFocused: boolean;
     isChatBoxFocused: boolean;
     chatBoxRef: React.RefObject<HTMLDivElement>;
-    _text: string;
     chatInput: string;
     conversation: string[];
 }
@@ -50,7 +51,6 @@ export class ChatBox extends Component<Props, State> {
             isTextAreaFocused: false,
             isChatBoxFocused: false,
             chatBoxRef: React.createRef<HTMLDivElement>(),
-            _text: '',
             chatInput: '',
             conversation: [],
         };
@@ -117,15 +117,21 @@ export class ChatBox extends Component<Props, State> {
         }
       };
 
+
+    getSelectedText = () => {
+        const selection = this.props.selection;
+        return selection ? selection.toString() : '';
+    }
+
     // This is where relooping should be handled. Conditional on conversation length (to check if first prompt),
     // then you loop through everything. Create a token  budget? See what API thinks
     handleChatSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const { chatInput } = this.state;
-        const prompt = this.state.conversation.length === 0 ? "Make a reference to this specific highlighted text: " + this.props.selection + "\n\n" + chatInput : chatInput;
+        const prompt = this.state.conversation.length === 0 ? "Make a reference to this specific highlighted text: " + this.getSelectedText() + "\n\n" + chatInput : chatInput;
         console.log('Prompt:', prompt);
         this.setState(prevState => ({
-            conversation: [...prevState.conversation, `You: ${this.state.chatInput}`],
+            conversation: [...prevState.conversation, `You: ${prompt}`],
             chatInput: ''
           }), async () => {
             // This code will be executed after the state update is applied
@@ -182,7 +188,10 @@ export class ChatBox extends Component<Props, State> {
                 <div ref={this.state.chatBoxRef} onClick={this.handleChatBoxFocus} className={`ChatBox__card ${this.state.isChatBoxFocused ? 'ChatBox__card--focused' : ''}`}>
                     <div>
                         {this.state.conversation.map((message, index) => (
-                            <div key={index} style={{ color: 'black', backgroundColor: 'white' }}>{message}</div>
+                            <>
+                            <Message key={index} message={message} />
+                            <br />
+                            </>
                         ))}
                     </div>
                     <form className = "ChatBox__card__inputalignment" onSubmit={this.handleChatSubmit}>
