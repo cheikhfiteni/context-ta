@@ -22,12 +22,23 @@ interface State {
     chatInput: string;
     conversation: string[];
 }
+
+// write a function in main to take as a prop to know which chatbox is active, and 
+// eventually be able to use that for 1) minorly locking RND and 2) knowing where to send
+// an existing to for a text selection. This is a bit more complicated then you think
+
+// consider blurring the outer chatbox when the user clicks the textarea or 
+// have the shadow highlihgt like one of those mazdas
+
+// Also for performance eventually remove the listener for global click when the chatbox is made inactive
+// and add it back when it is made active again
   
 interface Props {
     selection?: string;
     onDragStop: (position: Position) => void;
     onResizeStop: (size: Size) => void;
     onSubmit: (message: string) => void;
+    lastActive?: (eitherBoxOrAreaFocused: boolean) => void;
     position: Position;
     size: Size;
 }
@@ -54,8 +65,12 @@ export class ChatBox extends Component<Props, State> {
     }
 
     handleChatBoxFocus = () => {
-        console.log('Chatbox focused');
-        this.setState({ isChatBoxFocused: true });
+        if (!this.state.isTextAreaFocused) {
+            console.log('Chatbox focused sigh');
+            this.setState({ isChatBoxFocused: true });
+        } else {
+            console.log('Chatbox attempted focused, but text area is already focused');
+        }
     }
 
     handleChatBoxBlur = () => {
@@ -69,8 +84,9 @@ export class ChatBox extends Component<Props, State> {
             this.handleChatBoxBlur();
         }
     }
-    handleFocus = () => {
-        this.setState({ isTextAreaFocused: true });
+    handleFocus = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        event.stopPropagation();
+        this.setState({ isTextAreaFocused: true, isChatBoxFocused: false });
       };
       
       handleBlur = () => {
