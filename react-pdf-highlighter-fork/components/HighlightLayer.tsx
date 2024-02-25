@@ -8,28 +8,7 @@ import {
   ScaledPosition,
 } from "../types";
 
-import { ChatBox } from "../../src/components/chatBox";
-
-interface CBPosition {
-  x: number;
-  y: number;
-}
-
-interface Size {
-  width: number;
-  height: number;
-}
-
-//NOTE THIS CHANGE. MAYBE FIX THE SCALING
-interface ChatBoxPositionalState {
-  selection?: string;
-  position: CBPosition;
-  size: Size;
-}
-
-
 interface HighlightLayerProps<T_HT> {
-  chatBoxes: Array<ChatBoxPositionalState>;
   highlightsByPage: { [pageNumber: string]: Array<T_HT> };
   pageNumber: string;
   scrolledToHighlightId: string;
@@ -55,7 +34,6 @@ interface HighlightLayerProps<T_HT> {
 }
 
 export function HighlightLayer<T_HT extends IHighlight>({
-  // chatBoxes,
   highlightsByPage,
   scaledPositionToViewport,
   pageNumber,
@@ -107,17 +85,6 @@ export function HighlightLayer<T_HT extends IHighlight>({
           isScrolledTo
         );
       })}
-      {/* Note this is a functional component (finally ig lol) so destrcutured directly rather than with this */}
-      {/* {chatBoxes.map((chatBox, index) => (
-        <ChatBox
-          key={index}
-          position={chatBox.position}
-          size={chatBox.size}
-          onResizeStop={(size) => console.log('Size:', size)}
-          onDragStop={(position) => console.log('Position:', position)}
-          onSubmit={(message) => console.log('Message:', message)}
-        />
-      ))} */}
     </div>
   );
 }

@@ -688,7 +688,6 @@ export class PdfHighlighter<T_HT extends IHighlight> extends PureComponent<
     const { tip, scrolledToHighlightId } = this.state;
     root.render(
       <HighlightLayer
-        chatBoxes={this.props.chatBoxes}
         highlightsByPage={this.groupHighlightsByPage(highlights)}
         pageNumber={pageNumber.toString()}
         scrolledToHighlightId={scrolledToHighlightId}
