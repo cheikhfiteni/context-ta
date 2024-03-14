@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Auth0Login from './Auth0Login';
 import "../style/Dock.css";
 
 interface DockProps {
@@ -29,7 +30,17 @@ const Dock: React.FC<DockProps> = ({
   onDownload,
   handlePageChange,
   pageNumber
-}) => (
+}) => {
+
+  const [showLogin, setShowLogin] = useState(false);
+
+  // Toggle the display of the login button
+  const handleMoreActionsClick = () => {
+    onMoreActions();
+    setShowLogin(!showLogin);
+  };
+
+  return (
   <div id="toolbar" style={{ display: 'flex', justifyContent: 'space-between' }}>
     <div id="start" style={{ paddingLeft: '2ch', display: 'flex', alignItems: 'center' }}>
       <button onClick={onMenuClick} title="Open menu">Menu</button>
@@ -68,28 +79,34 @@ const Dock: React.FC<DockProps> = ({
       <button onClick={onRotate} title="Rotate counterclockwise">Rotate counterclockwise</button> */}
     </div>
     <div id="end" style={{ display: 'flex', alignItems: 'center', paddingRight: '20px', gap: '10px' }}>
-    {/* To make this code more maintainable on refactor have this pull from list and render each segment */}
-    <button onClick={onDownload} title="Download" style={{borderRadius: '50%', padding: '5px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-      <svg
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        height="1.4em"
-        width="1.4em"
-      >
-        <path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7 7-7z" />
-      </svg>
-    </button>
-    <button onClick={onPrint} title="Print" style={{borderRadius: '50%', padding: '5px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-        <svg
-          viewBox="0 0 1024 1024"
-          fill="currentColor"
-          height="1.4em"
-          width="1.4em"
-        >
-          <path d="M732 120c0-4.4-3.6-8-8-8H300c-4.4 0-8 3.6-8 8v148h440V120zm120 212H172c-44.2 0-80 35.8-80 80v328c0 17.7 14.3 32 32 32h168v132c0 4.4 3.6 8 8 8h424c4.4 0 8-3.6 8-8V772h168c17.7 0 32-14.3 32-32V412c0-44.2-35.8-80-80-80zM664 844H360V568h304v276zm164-360c0 4.4-3.6 8-8 8h-40c-4.4 0-8-3.6-8-8v-40c0-4.4 3.6-8 8-8h40c4.4 0 8 3.6 8 8v40z" />
-        </svg>
-      </button>
-      <button onClick={onMoreActions} title="More actions" style={{borderRadius: '50%', padding: '5px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+    {showLogin ? (
+      <Auth0Login />
+    ) : (
+      <>
+      {/* To make this code more maintainable on refactor have this pull from list and render each segment */}
+        <button onClick={onDownload} title="Download" style={{borderRadius: '50%', padding: '5px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <svg
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            height="1.4em"
+            width="1.4em"
+          >
+            <path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7 7-7z" />
+          </svg>
+        </button>
+        <button onClick={onPrint} title="Print" style={{borderRadius: '50%', padding: '5px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <svg
+              viewBox="0 0 1024 1024"
+              fill="currentColor"
+              height="1.4em"
+              width="1.4em"
+            >
+              <path d="M732 120c0-4.4-3.6-8-8-8H300c-4.4 0-8 3.6-8 8v148h440V120zm120 212H172c-44.2 0-80 35.8-80 80v328c0 17.7 14.3 32 32 32h168v132c0 4.4 3.6 8 8 8h424c4.4 0 8-3.6 8-8V772h168c17.7 0 32-14.3 32-32V412c0-44.2-35.8-80-80-80zM664 844H360V568h304v276zm164-360c0 4.4-3.6 8-8 8h-40c-4.4 0-8-3.6-8-8v-40c0-4.4 3.6-8 8-8h40c4.4 0 8 3.6 8 8v40z" />
+            </svg>
+          </button>
+      </>
+      )}
+      <button onClick={handleMoreActionsClick} title="More actions" style={{borderRadius: '50%', padding: '5px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="1"></circle>
           <circle cx="12" cy="5" r="1"></circle>
@@ -99,5 +116,5 @@ const Dock: React.FC<DockProps> = ({
     </div>
   </div>
 );
-
+};
 export default Dock;
