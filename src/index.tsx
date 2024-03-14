@@ -1,4 +1,8 @@
-import App from "./App";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+import './style/index.css'
+
 import { Auth0Provider } from "@auth0/auth0-react";
 import { AUTH_CONFIG } from "./lib/auth0-provider";
 import history from "./lib/history";
@@ -25,9 +29,11 @@ const providerConfig = {
 
 
 root.render(
-<Auth0Provider
-    {...providerConfig}
-    >
-    <App />
-</Auth0Provider>
+<React.StrictMode>
+    <Auth0Provider
+        {...providerConfig}
+        >
+        <App />
+    </Auth0Provider>
+</React.StrictMode>
 );
