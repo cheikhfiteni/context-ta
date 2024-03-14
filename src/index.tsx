@@ -1,14 +1,18 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './style/index.css'
 
 import { Auth0Provider } from "@auth0/auth0-react";
 import { AUTH_CONFIG } from "./lib/auth0-provider";
-import history from "./lib/history";
+import history from "./lib/history.ts";
 import { createRoot } from "react-dom/client";
 
-const onRedirectCallback = (appState) => {
+interface AppState {
+    returnTo?: string;
+    [key: string]: any; // This allows for any number of additional properties with any type
+}
+
+const onRedirectCallback = (appState?: AppState) => {
     history.push(
       appState && appState.returnTo ? appState.returnTo : window.location.pathname
     );
