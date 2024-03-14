@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Auth0Login from './Auth0Login';
+import Auth0Logout from './Auth0Logout';
+import { useAuth0 } from "@auth0/auth0-react";
 import "../style/Dock.css";
 
 interface DockProps {
@@ -33,6 +35,16 @@ const Dock: React.FC<DockProps> = ({
 }) => {
 
   const [showLogin, setShowLogin] = useState(false);
+  const { isAuthenticated } = useAuth0();
+
+  useEffect(() => {
+    console.log('isAuthenticated:', isAuthenticated);
+    // You can also log it when it changes to false specifically
+    if (!isAuthenticated) {
+      console.log('User has logged out.');
+      setShowLogin(false);
+    }
+  }, [isAuthenticated]);
 
   // Toggle the display of the login button
   const handleMoreActionsClick = () => {
@@ -80,7 +92,7 @@ const Dock: React.FC<DockProps> = ({
     </div>
     <div id="end" style={{ display: 'flex', alignItems: 'center', paddingRight: '20px', gap: '10px' }}>
     {showLogin ? (
-      <Auth0Login />
+      isAuthenticated ? <Auth0Logout /> : <Auth0Login />
     ) : (
       <>
       {/* To make this code more maintainable on refactor have this pull from list and render each segment */}
