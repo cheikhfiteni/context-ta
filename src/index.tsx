@@ -14,7 +14,7 @@ interface AppState {
 
 const onRedirectCallback = (appState?: AppState) => {
     history.push(
-      appState && appState.returnTo ? appState.returnTo : window.location.pathname
+        appState?.returnTo ?? window.location.pathname
     );
   };
 
