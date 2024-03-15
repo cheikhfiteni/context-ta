@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Auth0Login from './Auth0Login';
 import Auth0Logout from './Auth0Logout';
 import { useAuth0 } from "@auth0/auth0-react";
+import { getAPIRoute } from '../services/message.service';
 import "../style/Dock.css";
 
 interface DockProps {
@@ -52,6 +53,15 @@ const Dock: React.FC<DockProps> = ({
     setShowLogin(!showLogin);
   };
 
+  const handleApiCheck = async () => {
+    try {
+      const response = await getAPIRoute();
+      console.log('API Data:', response.data);
+    } catch (error) {
+      console.error('API Error:', error);
+    }
+  };
+
   return (
   <div id="toolbar" style={{ display: 'flex', justifyContent: 'space-between' }}>
     <div id="start" style={{ paddingLeft: '2ch', display: 'flex', alignItems: 'center' }}>
@@ -91,6 +101,7 @@ const Dock: React.FC<DockProps> = ({
       <button onClick={onRotate} title="Rotate counterclockwise">Rotate counterclockwise</button> */}
     </div>
     <div id="end" style={{ display: 'flex', alignItems: 'center', paddingRight: '20px', gap: '10px' }}>
+    <button onClick={handleApiCheck} title="Check API">Check API</button>
     {showLogin ? (
       isAuthenticated ? <Auth0Logout /> : <Auth0Login />
     ) : (
