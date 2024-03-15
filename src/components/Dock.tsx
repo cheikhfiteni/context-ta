@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Auth0Login from './Auth0Login';
 import Auth0Logout from './Auth0Logout';
 import { useAuth0 } from "@auth0/auth0-react";
-import { getAPIRoute, getAPIRoutePrivate } from '../services/message.service';
+import { getAPIRoutePrivate } from '../services/message.service';
 import "../style/Dock.css";
 
 interface DockProps {
