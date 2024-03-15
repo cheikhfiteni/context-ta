@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Auth0Login from './Auth0Login';
 import Auth0Logout from './Auth0Logout';
 import { useAuth0 } from "@auth0/auth0-react";
-import { getAPIRoute } from '../services/message.service';
+import { getAPIRoute, getAPIRoutePrivate } from '../services/message.service';
 import "../style/Dock.css";
 
 interface DockProps {
@@ -36,7 +36,7 @@ const Dock: React.FC<DockProps> = ({
 }) => {
 
   const [showLogin, setShowLogin] = useState(false);
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
     console.log('isAuthenticated:', isAuthenticated);
@@ -55,7 +55,8 @@ const Dock: React.FC<DockProps> = ({
 
   const handleApiCheck = async () => {
     try {
-      const response = await getAPIRoute();
+      const token = await getAccessTokenSilently();
+      const response = await getAPIRoutePrivate(token);
       console.log('API Data:', response.data);
     } catch (error) {
       console.error('API Error:', error);

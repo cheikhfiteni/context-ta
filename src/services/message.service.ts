@@ -21,6 +21,24 @@ export const getAPIRoute = async (): Promise<ApiResponse> => {
   };
 };
 
+export const getAPIRoutePrivate = async (token: string): Promise<ApiResponse> => {
+  const config: AxiosRequestConfig = {
+    url: `${apiServerUrl}/api`,
+    method: "GET",
+    headers: {
+      "content-type": "application/json",
+      "Authorization": `Bearer ${token}` // Include the token in the Authorization header
+    },
+  };
+
+  const { data, error } = (await callExternalApi({ config })) as ApiResponse;
+
+  return {
+    data,
+    error,
+  };
+};
+
 export const getPublicResource = async (): Promise<ApiResponse> => {
   const config: AxiosRequestConfig = {
     url: `${apiServerUrl}/api/messages/public`,
