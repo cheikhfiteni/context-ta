@@ -1,5 +1,5 @@
 import React from 'react'
-import App from './App.tsx'
+import AppRouter from './AppRouter.tsx'
 import './style/index.css'
 
 import { Auth0Provider } from "@auth0/auth0-react";
@@ -37,7 +37,7 @@ root.render(
     <Auth0Provider
         {...providerConfig}
         >
-        <App />
+        <AppRouter />
     </Auth0Provider>
 </React.StrictMode>
 );
