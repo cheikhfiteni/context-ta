@@ -1,8 +1,7 @@
 import { AxiosRequestConfig } from "axios";
 import { ApiResponse } from "../models/api-response";
 import { callExternalApi } from "./external-api.service";
-
-const apiServerUrl = `http://localhost:3000`;
+import { apiServerUrl } from "../lib/server-config";
 
 export const getAPIRoute = async (): Promise<ApiResponse> => {
   const config: AxiosRequestConfig = {

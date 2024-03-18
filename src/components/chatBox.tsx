@@ -5,6 +5,7 @@ import "../style/ChatBox.css";
 
 import Message from './Message';
 import WebSocketService from '../lib/websocketService';
+import { webSocketServerUrl } from '../lib/server-config';
 
 interface Position {
     x: number;
@@ -63,7 +64,7 @@ export class ChatBox extends Component<Props, State> {
     componentDidMount() {
         document.addEventListener('click', this.handleGlobalClick);
         // Switch to correct URL later. Have testing and prod envs when doing CI/CD
-        this.webSocketService.initialize('ws://localhost:3000');
+        this.webSocketService.initialize(`${webSocketServerUrl}`);
         // Where the magic happens. Eventually use a message broker
         this.webSocketService.onMessage((message) => {this.handleWebSocketMessage(message)});
     }

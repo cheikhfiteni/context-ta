@@ -3,7 +3,7 @@ import DashboardNav from './components/DashboardNav';
 import "./style/Dashboard.css";
 
 const Dashboard = () => {
-  const [cachedFiles, setCachedFiles] = useState<string[]>([
+  const [cachedFiles, _setCachedFiles] = useState<string[]>([
     'http://example.com/file1.pdf',
     'http://example.com/file2.pdf',
     'http://example.com/file3.pdf',
