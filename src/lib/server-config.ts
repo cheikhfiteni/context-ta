@@ -8,7 +8,7 @@ const webSocketServerUrl = import.meta.env.NODE_ENV === 'production'
     : import.meta.env.DEVELOPMENT_WS_URL || 'ws://localhost:3000';
 
 const webClientUrl = import.meta.env.NODE_ENV === 'production'
-    ? import.meta.env.PRODUCTION_CLIENT_PORT
-    : import.meta.env.DEVELOPMENT_CLIENT_PORT || 'http://localhost:5173';
+    ? import.meta.env.PRODUCTION_CLIENT_URL
+    : import.meta.env.DEVELOPMENT_CLIENT_URL || 'http://localhost:5173';
 
 export { apiServerUrl, webSocketServerUrl, webClientUrl };
