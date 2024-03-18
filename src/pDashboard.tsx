@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import testData from './lib/temp-file-data.ts';
 import "./style/Dashboard.css";
 
 const Dashboard = () => {
-  const [cachedFiles, setCachedFiles] = useState<string[]>([
+  const [cachedFiles, _setCachedFiles] = useState<string[]>([
     // Assuming these are the names or URLs of the cached PDF files
     'cached_file_1.pdf',
     'cached_file_2.pdf',
