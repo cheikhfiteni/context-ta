@@ -15,7 +15,6 @@ interface State {
 interface Props {
   onConfirm: (comment: { text: string; emoji: string }) => void;
   onOpen: () => void;
-  onToolTipClick: () => void;
   onUpdate?: () => void;
   selection?: string;
 }
@@ -47,12 +46,8 @@ export class Tip extends Component<Props, State> {
   handleAddHighlightClick = () => {
     const selectedText = this.getSelectedText();
     console.log('Selected text:', selectedText);
-    // DISABLING THE TOOL TIP EXPANSION, NOT NEEDED ANYMORE
-    this.setState({ text: selectedText, compact: true });
+    this.setState({ text: selectedText, compact: false });
     this.props.onOpen();
-
-    // Now if the ChatBox is handled elsewhere
-    this.props.onToolTipClick();
   };
 
   handleChatInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {

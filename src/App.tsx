@@ -1,4 +1,4 @@
-import React, { Component, ChangeEvent } from "react";
+import { Component, ChangeEvent } from "react";
 
 import {
   PdfLoader,
@@ -9,39 +9,20 @@ import {
   AreaHighlight,
 } from "./react-pdf-highlighter";
 
-import type { IHighlight, NewHighlight} from "./react-pdf-highlighter";
+import type { IHighlight, NewHighlight } from "./react-pdf-highlighter";
 
 import { testHighlights as _testHighlights } from "./test-highlights";
 import { Spinner } from "./Spinner";
-import Dock from "./components/Dock";
+// import { Sidebar } from "./Sidebar";
 
 import "./style/App.css";
-import { calculateChatBoxPosition } from "./lib/util";
 
 const testHighlights: Record<string, Array<IHighlight>> = _testHighlights;
-
-interface Position {
-  x: number;
-  y: number;
-}
-
-interface Size {
-  width: number;
-  height: number;
-}
-
-
-interface ChatBoxPositionalState {
-  selection?: string;
-  position: Position;
-  size: Size;
-}
 
 interface State {
   url: string;
   highlights: Array<IHighlight>;
   isPopupOpen: boolean;
-  chatBoxes: Array<ChatBoxPositionalState>;
 }
 
 const getNextId = () => String(Math.random()).slice(2);
@@ -65,13 +46,11 @@ const HighlightPopup = ({
   ) : null;
 
 const PRIMARY_PDF_URL = "https://arxiv.org/pdf/1708.08021.pdf";
-// const PRIMARY_PDF_URL = "https://cors-anywhere.herokuapp.com/https://www.cs.cmu.edu/~sandholm/Expressive%20commerce.aimag07.pdf";
 const SECONDARY_PDF_URL = "https://arxiv.org/pdf/1604.02480.pdf";
 
 const searchParams = new URLSearchParams(document.location.search);
 
 const initialUrl = searchParams.get("url") || PRIMARY_PDF_URL;
-let initialTitle = searchParams.get("title") || "Fast and Precise Type Checking for JavaScript";
 
 class App extends Component<{}, State> {
   state = {
@@ -80,22 +59,15 @@ class App extends Component<{}, State> {
     highlights: testHighlights[initialUrl]
       ? [...testHighlights[initialUrl]]
       : [],
-    chatBoxes: [] as Array<ChatBoxPositionalState>,
   };
-
-  fileInputRef = React.createRef<HTMLInputElement>();
-
-  pdfPageHeight = 0;
-
+  
   onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       const fileURL = URL.createObjectURL(file);
-      initialTitle = file.name;
       this.setState({
         url: fileURL,
         highlights: [],
-        chatBoxes: [],
         isPopupOpen: false,
       });
     }
@@ -130,30 +102,17 @@ class App extends Component<{}, State> {
   };
 
   componentDidMount() {
-    this.updatePdfPageHeight();
-    // When I don't want to use the test highlights
-    this.resetHighlights();
     window.addEventListener(
       "hashchange",
       this.scrollToHighlightFromHash,
       false
     );
     window.addEventListener("keydown", this.handleKeyDown);
-    window.addEventListener('resize', this.updatePdfPageHeight);
   }
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKeyDown);
-    window.removeEventListener('resize', this.updatePdfPageHeight);
   }
-
-  updatePdfPageHeight = () => {
-    const page = document.querySelector('.pdf-page') as HTMLElement;
-    if (page) {
-      this.pdfPageHeight = page.offsetHeight;
-    }
-  }
-
 
 
   handleKeyDown = (event: KeyboardEvent) => {
@@ -218,65 +177,31 @@ class App extends Component<{}, State> {
     });
   }
 
-  handleToolTipClick = (selection: string, position: Position) => {
-    this.setState((prevState) => ({
-      chatBoxes: [...prevState.chatBoxes, { position, size: { width: 320, height: 200 }, selection }],
-    }));
-  };
-
   render() {
     const { url, highlights } = this.state;
 
     return (
-      <>
-      <input
-        type="file"
-        ref={this.fileInputRef}
-        style={{ display: 'none' }}
-        onChange={this.onFileChange}
-        accept="application/pdf"
-      />
-      <Dock
-        title={null|| initialTitle}
-        onMenuClick={() => this.fileInputRef.current?.click()}
-        onZoomIn={() => console.log('Zoom in clicked')}
-        onZoomOut={() => console.log('Zoom out clicked')}
-        // onFitToPage={() => console.log('Fit to page clicked')}
-        // onRotate={() => console.log('Rotate clicked')}
-        onPrint={() => console.log('Print clicked')}
-        onMoreActions={() => console.log('More actions clicked')}
-        onDownload={() => console.log('Download clicked')}
-        handlePageChange={() => console.log('Page change clicked')}
-        pageNumber={1000}
-      />
-      <div className="App" style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <div className="App" style={{ display: "flex", height: "100vh" }}>
+        <input type="file" onChange={this.onFileChange} accept="application/pdf" />
         {/* <Sidebar
           highlights={highlights}
           resetHighlights={this.resetHighlights}
           toggleDocument={this.toggleDocument}
         /> */}
-        {/* <ChatBox
-          position={{ x: window.innerWidth - 350, y: 240 }}
-          size={{ width: 320, height: 200 }}
-          onResizeStop={(size) => console.log('Size:', size)}
-          onDragStop={(position) => console.log('Position:', position)}
-          onSubmit={(message) => console.log('Message:', message)}
-        /> */}
         <div
           style={{
             height: "100vh",
-            width: "100vw",
+            width: "75vw",
             position: "relative",
           }}
         >
           <PdfLoader url={url} beforeLoad={<Spinner />}>
             {(pdfDocument) => (
               <PdfHighlighter
-                chatBoxes={this.state.chatBoxes}
                 pdfDocument={pdfDocument}
                 enableAreaSelection={(event) => event.altKey}
                 onScrollChange={resetHash}
-                pdfScaleValue="page-actual"
+                // pdfScaleValue="page-width"
                 scrollRef={(scrollTo) => {
                   this.scrollViewerTo = scrollTo;
 
@@ -291,8 +216,6 @@ class App extends Component<{}, State> {
                   <Tip
                     selection={content.text}
                     onOpen={transformSelection}
-                    // Eventually need to convert scaledPosition to Position using a lib function
-                    onToolTipClick={() => this.handleToolTipClick(content.text || "no text selected", calculateChatBoxPosition(position, this.pdfPageHeight) as Position)}
                     onConfirm={(comment) => {
                       this.addHighlight({ content, position, comment });
                       hideTipAndSelection();
@@ -350,7 +273,6 @@ class App extends Component<{}, State> {
           </PdfLoader>
         </div>
       </div>
-      </>
     );
   }
 }
