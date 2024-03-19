@@ -3,8 +3,12 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-  background-color: #ffffff;
+  /* Make lighter */
+  background-color: #d8e2ed;
+  /* Dark mode saving */
+  /* background-color: #525659; */
   color: #fff;
+  overflow: hidden;
 }
 
 .sidebar {

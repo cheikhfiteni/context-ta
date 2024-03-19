@@ -9,17 +9,3 @@ export const callOpenAI = async (prompt: string) => {
   });
   return completion.choices[0].message.content;
 }
-
-export const callOpenAIStream = async (messages: any[], onChunkReceived: (chunk: string) => void) => {
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4-0125-preview",
-    messages: messages,
-    stream: true,
-  });
-
-  for await (const chunk of completion) {
-    if (chunk.choices[0].delta && chunk.choices[0].delta.content) {
-      onChunkReceived(chunk.choices[0].delta.content);
-    }
-  }
-}

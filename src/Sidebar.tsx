@@ -10,7 +10,7 @@ const updateHash = (highlight: IHighlight) => {
   document.location.hash = `highlight-${highlight.id}`;
 };
 
-declare const APP_VERSION: string;
+const APP_VERSION: string = "1.0.0";
 
 export function Sidebar({
   highlights,

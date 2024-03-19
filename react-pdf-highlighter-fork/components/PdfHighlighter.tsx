@@ -2,6 +2,8 @@ import "pdfjs-dist/web/pdf_viewer.css";
 import "../style/pdf_viewer.css";
 import "../style/PdfHighlighter.css";
 
+import { ChatBox } from "../../src/components/chatBox";
+
 import {
   EventBus,
   NullL10n,
@@ -55,7 +57,25 @@ interface State<T_HT> {
   scrolledToHighlightId: string;
 }
 
+interface CBPosition {
+  x: number;
+  y: number;
+}
+
+interface Size {
+  width: number;
+  height: number;
+}
+
+//NOTE THIS CHANGE. MAYBE FIX THE SCALING
+interface ChatBoxPositionalState {
+  selection?: string;
+  position: CBPosition;
+  size: Size;
+}
+
 interface Props<T_HT> {
+  chatBoxes: Array<ChatBoxPositionalState>;
   highlightTransform: (
     highlight: T_ViewportHighlight<T_HT>,
     index: number,
@@ -557,6 +577,18 @@ export class PdfHighlighter<T_HT extends IHighlight> extends PureComponent<
           className="PdfHighlighter"
           onContextMenu={(e) => e.preventDefault()}
         >
+          {/* FINALLY FINALLY FINALLY. Need to use this connective tissue and have it open in the right pace */}
+          {this.props.chatBoxes.map((chatBox, index) => (
+            <ChatBox
+              key={index}
+              position={chatBox.position}
+              size={chatBox.size}
+              selection={chatBox.selection}
+              onResizeStop={(size) => console.log('Size:', size)}
+              onDragStop={(position) => console.log('Position:', position)}
+              onSubmit={(message) => console.log('Message:', message)}
+            />
+          ))}
           <div className="pdfViewer" />
           {this.renderTip()}
           {typeof enableAreaSelection === "function" ? (
