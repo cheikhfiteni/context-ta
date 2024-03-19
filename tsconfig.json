@@ -11,6 +11,7 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    /* Set back to true; trying to run Vercel build */
     "noEmit": true,
     "jsx": "react-jsx",
 
