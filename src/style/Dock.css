@@ -1,6 +1,11 @@
 /* Dock.css */
 .dock {
   transition: opacity 1s ease-in-out;
+  position: absolute; /* Position dock absolutely */
+  top: 0; /* Align to the top of the document */
+  left: 0; /* Align to the left of the document */
+  right: 0; /* Ensure it stretches across the top */
+  z-index: 2000; /* High z-index to stack above other content */
 }
 
 .dock.inactive {
