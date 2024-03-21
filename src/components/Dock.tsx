@@ -20,6 +20,7 @@ interface DockProps {
 }
 
 const SLICE_LENGTH = 53;
+const INACTIVITY_TIMEOUT = 3000;
 
 const Dock: React.FC<DockProps> = ({
   title,
@@ -52,15 +53,16 @@ const Dock: React.FC<DockProps> = ({
 
   useEffect(() => {
     // Set up the initial inactivity timer
-    inactivityTimer = setTimeout(setInactive, 3000); // 5 seconds of inactivity
+    inactivityTimer = setTimeout(setInactive, INACTIVITY_TIMEOUT); // 5 seconds of inactivity
 
-    // Add mousemove event listener to reset the timer on interaction
-    window.addEventListener('mousemove', resetInactivityTimer);
+    // Add mousemove event listener to the dock element to reset the timer on interaction
+    const dockElement = dockRef.current;
+    dockElement?.addEventListener('mousemove', resetInactivityTimer);
 
     // Clean up the timer and event listener on unmount
     return () => {
       clearTimeout(inactivityTimer);
-      window.removeEventListener('mousemove', resetInactivityTimer);
+      dockElement?.removeEventListener('mousemove', resetInactivityTimer);
     };
   }, []);
 
@@ -72,7 +74,7 @@ const Dock: React.FC<DockProps> = ({
   const resetInactivityTimer = () => {
     clearTimeout(inactivityTimer);
     setIsInactive(false);
-    inactivityTimer = setTimeout(setInactive, 5000); // 5 seconds of inactivity
+    inactivityTimer = setTimeout(setInactive, INACTIVITY_TIMEOUT); // 5 seconds of inactivity
   };
 
 
@@ -96,7 +98,7 @@ const Dock: React.FC<DockProps> = ({
   const dockClass = isInactive ? 'dock inactive' : 'dock';
 
   return (
-  <div id="toolbar" className={dockClass} style={{ display: 'flex', justifyContent: 'space-between' }}>
+  <div id="toolbar" ref={dockRef} className={dockClass} style={{ display: 'flex', justifyContent: 'space-between' }}>
     <div id="start" style={{ paddingLeft: '2ch', display: 'flex', alignItems: 'center' }}>
       <button onClick={onMenuClick} title="Open menu">Menu</button>
       {/* Change the font, and title up padding */}
