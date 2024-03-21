@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Auth0Login from './Auth0Login';
 import Auth0Logout from './Auth0Logout';
 import { useAuth0 } from "@auth0/auth0-react";
@@ -37,6 +37,9 @@ const Dock: React.FC<DockProps> = ({
 
   const [showLogin, setShowLogin] = useState(false);
   const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const [isInactive, setIsInactive] = useState(false);
+  const dockRef = useRef<HTMLDivElement>(null); 
+  let inactivityTimer: any = null;
 
   useEffect(() => {
     console.log('isAuthenticated:', isAuthenticated);
@@ -46,6 +49,32 @@ const Dock: React.FC<DockProps> = ({
       setShowLogin(false);
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    // Set up the initial inactivity timer
+    inactivityTimer = setTimeout(setInactive, 3000); // 5 seconds of inactivity
+
+    // Add mousemove event listener to reset the timer on interaction
+    window.addEventListener('mousemove', resetInactivityTimer);
+
+    // Clean up the timer and event listener on unmount
+    return () => {
+      clearTimeout(inactivityTimer);
+      window.removeEventListener('mousemove', resetInactivityTimer);
+    };
+  }, []);
+
+
+  const setInactive = () => {
+    setIsInactive(true);
+  };
+
+  const resetInactivityTimer = () => {
+    clearTimeout(inactivityTimer);
+    setIsInactive(false);
+    inactivityTimer = setTimeout(setInactive, 5000); // 5 seconds of inactivity
+  };
+
 
   // Toggle the display of the login button
   const handleMoreActionsClick = () => {
@@ -63,8 +92,11 @@ const Dock: React.FC<DockProps> = ({
     }
   };
 
+
+  const dockClass = isInactive ? 'dock inactive' : 'dock';
+
   return (
-  <div id="toolbar" style={{ display: 'flex', justifyContent: 'space-between' }}>
+  <div id="toolbar" className={dockClass} style={{ display: 'flex', justifyContent: 'space-between' }}>
     <div id="start" style={{ paddingLeft: '2ch', display: 'flex', alignItems: 'center' }}>
       <button onClick={onMenuClick} title="Open menu">Menu</button>
       {/* Change the font, and title up padding */}

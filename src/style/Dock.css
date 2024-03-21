@@ -1,4 +1,15 @@
 /* Dock.css */
+.dock {
+  transition: opacity 1s ease-in-out;
+}
+
+.dock.inactive {
+  opacity: 0;
+}
+
+.dock:hover {
+  opacity: 1 !important; /* Force opacity to 1 on hover */
+}
 
 #toolbar {
     background-color: #444a4e;
