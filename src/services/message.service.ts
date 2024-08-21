@@ -39,6 +39,44 @@ export const getAPIRoutePrivate = async (token: string): Promise<ApiResponse> =>
 };
 
 
+export const getUserPreferences = async (token: string): Promise<ApiResponse> => {
+  const config: AxiosRequestConfig = {
+    url: `${apiServerUrl}/user-preferences`,
+    method: "GET",
+    headers: {
+      "content-type": "application/json",
+      "Authorization": `Bearer ${token}` // Include the token in the Authorization header
+    },
+  };
+
+  const { data, error } = (await callExternalApi({ config })) as ApiResponse;
+
+  return {
+    data,
+    error,
+  };
+};
+
+
+export const postUserPreferences = async (accessToken: string, userPreferences: Record<string, string>): Promise<ApiResponse> => {
+  const config: AxiosRequestConfig = {
+    url: `${apiServerUrl}/user-preferences`,
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "Authorization": `Bearer ${accessToken}`, // Include the access token in the Authorization header
+    },
+    data: userPreferences,
+  };
+
+  const { data, error } = (await callExternalApi({ config })) as ApiResponse;
+
+  return {
+    data,
+    error,
+  };
+};
+
 // Need to make sure that ID is interpretted uniquely, but also that the access token used well
 export const postConversationHistory = async (documentId: string, historyData: Record<string, any>, accessToken: string): Promise<ApiResponse> => {
   const config: AxiosRequestConfig = {

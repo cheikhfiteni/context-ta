@@ -104,6 +104,7 @@ const Dock: React.FC<DockProps> = ({
       {/* Change the font, and title up padding */}
       <span id="title" style={{ paddingLeft: '2ch' }}>{title.length > SLICE_LENGTH ? `${title.slice(0, SLICE_LENGTH)}...` : title}</span>
     </div>
+    {false && (
     <div id="center" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
 
     <input type="number" style={{width:'4em', backgroundColor: "#ffff"}} value={pageNumber} aria-label="Page number" onChange={(e) => handlePageChange(parseInt(e.target.value))} />
@@ -135,8 +136,9 @@ const Dock: React.FC<DockProps> = ({
       {/* <button onClick={onFitToPage} title="Fit to page">Fit to page</button>
       <button onClick={onRotate} title="Rotate counterclockwise">Rotate counterclockwise</button> */}
     </div>
+    )}
     <div id="end" style={{ display: 'flex', alignItems: 'center', paddingRight: '20px', gap: '10px' }}>
-    <button onClick={handleApiCheck} title="Check API">Check API</button>
+    {/* <button onClick={handleApiCheck} title="Check API">Check API</button> */}
     {showLogin ? (
       isAuthenticated ? <Auth0Logout /> : <Auth0Login />
     ) : (

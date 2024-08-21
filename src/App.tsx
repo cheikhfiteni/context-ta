@@ -30,7 +30,6 @@ interface Size {
   height: number;
 }
 
-
 interface ChatBoxPositionalState {
   selection?: string;
   position: Position;
@@ -42,6 +41,7 @@ interface State {
   highlights: Array<IHighlight>;
   isPopupOpen: boolean;
   chatBoxes: Array<ChatBoxPositionalState>;
+  selectedChatBoxIndex: number | null;
 }
 
 const getNextId = () => String(Math.random()).slice(2);
@@ -81,6 +81,7 @@ class App extends Component<{}, State> {
       ? [...testHighlights[initialUrl]]
       : [],
     chatBoxes: [] as Array<ChatBoxPositionalState>,
+    selectedChatBoxIndex: null, 
   };
 
   fileInputRef = React.createRef<HTMLInputElement>();
@@ -157,17 +158,40 @@ class App extends Component<{}, State> {
 
 
   handleKeyDown = (event: KeyboardEvent) => {
-    if (event.metaKey && event.key === 'k') {
-      event.preventDefault();
-      this.openChatWithHighlightedText();
+    if (event.metaKey) {
+      if (event.key === 'l') {
+        event.preventDefault();
+        this.openChatWithHighlightedText();
+      } else if (event.key === 'x') {
+        event.preventDefault();
+        this.deleteSelectedChatBox();
+      }
     }
   };
 
-  // TODO: Finish these with cursor like dyanmic chat input
   openChatWithHighlightedText = () => {
-    const selectedText = this.getSelectedText();
-    console.log('Selected text:', selectedText);
-    // Open chat with selected text
+    const selectedText = window.getSelection()?.toString() || "";
+    if (selectedText) {
+      const newPosition = { x: window.innerWidth / 2 - 160, y: window.innerHeight / 2 - 100 };
+      this.setState((prevState) => ({
+        chatBoxes: [...prevState.chatBoxes, { position: newPosition, size: { width: 320, height: 200 }, selection: selectedText }],
+        selectedChatBoxIndex: prevState.chatBoxes.length,
+      }));
+    }
+  };
+
+  handleChatBoxClick = (index: number) => {
+    this.setState({ selectedChatBoxIndex: index });
+  };
+
+  deleteSelectedChatBox = () => {
+    const { selectedChatBoxIndex } = this.state;
+    if (selectedChatBoxIndex !== null) {
+      this.setState((prevState) => ({
+        chatBoxes: prevState.chatBoxes.filter((_, index) => index !== selectedChatBoxIndex),
+        selectedChatBoxIndex: null
+      }));
+    }
   };
 
 
